@@ -15,8 +15,8 @@ import twitter4j.TwitterFactory;
  */
 public class Testtwitter {
 
-    static final String DEFAULT_WORD = "アベノミスク";
-    static final int MAX_PAGE = 1; // 15;
+    static final String DEFAULT_WORD = "アベノミクス";
+    static final int MAX_PAGE = 15; // 1;
 
     static String word = DEFAULT_WORD;
     static int page = MAX_PAGE;
