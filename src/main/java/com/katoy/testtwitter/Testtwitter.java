@@ -20,6 +20,8 @@ public class Testtwitter {
 
     static String word = DEFAULT_WORD;
     static int page = MAX_PAGE;
+    static String from_date = null; // "2014-11-01";
+    static String to_date = null;   //  "2014-11-09";
 
     /**
      * コマンドメイン
@@ -29,7 +31,9 @@ public class Testtwitter {
     public static void main(String[] args) {
         parse_args(args);
         try {
-            new TwitterReader().reader(Testtwitter.word, Testtwitter.page);
+            new TwitterReader().reader(Testtwitter.word,
+                    Testtwitter.from_date, Testtwitter.to_date,
+                    Testtwitter.page);
         } catch (TwitterException ex) {
             // TODO Auto-generated catch block
             ex.printStackTrace();
@@ -37,8 +41,14 @@ public class Testtwitter {
     }
 
     static void parse_args(String[] args) {
-        if (args.length > 2) {
+        if (args.length > 4) {
             throw new IllegalArgumentException();
+        }
+        if (args.length > 3) {
+            Testtwitter.to_date = args[3];
+        }
+        if (args.length > 2) {
+            Testtwitter.from_date = args[2];
         }
         if (args.length > 1) {
             Testtwitter.page = Integer.parseInt(args[1]);
@@ -54,11 +64,13 @@ class TwitterReader {
     /**
      *
      * @param word 検索ワード
+     * @param from_date 期間の開始 YYYY-MM-DD
+     * @param to_date 期間の収容 YYYY-MM-DD
      * @param page 検索するページ数
      * @return int 検索した tweet 数。
      * @throws TwitterException
      */
-    int reader(final String word, final int page) throws TwitterException {
+    int reader(final String word, final String from_date, final String to_date, final int page) throws TwitterException {
         // 初期化
         int count = 0;  // 取得した総件数
         final Twitter twitter = new TwitterFactory().getInstance();
@@ -70,7 +82,12 @@ class TwitterReader {
         // 1 度のリクエストで取得する Tweet の数（100が最大）
         query.setCount(100);
         query.resultType(Query.RECENT);
-
+        if (from_date != null) {
+          query.since(from_date);
+        }
+        if (to_date != null) {
+          query.until(to_date);
+        }
         for (int i = 0; i < page; i++) {
             QueryResult result = twitter.search(query);
             System.out.println("ヒット数 : " + result.getTweets().size());
